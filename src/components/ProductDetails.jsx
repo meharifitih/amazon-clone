@@ -1,5 +1,6 @@
 import { ProductBadge, ProductRatings } from "./";
 
+
 const ProductDetails = ({ product, ratings }) => {
   return (
     <div className="mb-1">

@@ -1,12 +1,22 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { callApi } from "../utils/callApi";
 import { GB_CURRENCY } from "../utils/constants";
 import { ProductDetails } from "./";
+import { addToCart } from "../redux/cartSlice";
 
 const ProductPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+
+  const dispatch = useDispatch();
+
+  const addQuantityToProduct = () => {
+    setProduct((product.quantity = quantity));
+    return product;
+  };
 
   const getProduct = () => {
     callApi(`data/products.json`).then((productResults) => {
@@ -44,7 +54,9 @@ const ProductPage = () => {
                 {GB_CURRENCY.format(product.price)}
               </div>
               <div className="text-base xl:text-lg text-gray-700 text-right font-semibold">
-                <span className="line-through">RRP: {GB_CURRENCY.format(product.oldPrice)}</span>
+                <span className="line-through">
+                  RRP: {GB_CURRENCY.format(product.oldPrice)}
+                </span>
               </div>
               <div className="text-sm xl:text-base text-blue-500 font-semibold mt-3">
                 FREE Returns
@@ -52,16 +64,28 @@ const ProductPage = () => {
               <div className="text-sm xl:text-base text-blue-500 font-semibold mt-1">
                 FREE Delivery
               </div>
-              <div className="text-base xl:text-lg text-green-700 font-semibold mt-1">In Stock</div>
+              <div className="text-base xl:text-lg text-green-700 font-semibold mt-1">
+                In Stock
+              </div>
               <div className="text-base xl:text-lg mt-1">
                 Quantity:
-                <select className="p-2 bg-white rounded-md focus:border-indigo-600">
+                <select
+                  onChange={(e) => setQuantity(e.target.value)}
+                  className="p-2 bg-white rounded-md focus:border-indigo-600"
+                >
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
                 </select>
               </div>
-              <button className="bg-yellow-400 w-full p-3 text-xs xl:text-sm rounded hover:bg-yellow-500 mt-3">Add To Cart</button>
+              <Link to={"/checkout"}>
+                <button
+                  onClick={() => dispatch(addToCart(addQuantityToProduct()))}
+                  className="bg-yellow-400 w-full p-3 text-xs xl:text-sm rounded hover:bg-yellow-500 mt-3"
+                >
+                  Add To Cart
+                </button>
+              </Link>
             </div>
           </div>
         </div>
